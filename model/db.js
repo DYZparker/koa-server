@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
 
-mongoose.connect('mongodb://localhost/itcast', {useNewUrlParser: true, useUnifiedTopology: true}, function(err){
+mongoose.connect('mongodb://127.0.0.1/itcast', {useNewUrlParser: true, useUnifiedTopology: true}, function(err){
   if(err) {
     console.log(err)
     return

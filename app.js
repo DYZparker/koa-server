@@ -53,9 +53,6 @@ app.use(async (ctx, next) => {
 
 // logger
 app.use(async (ctx, next) => {
-  // ctx.set("Access-Control-Allow-Origin", "http://localhost:9000/api")
-  // ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
-  // ctx.set("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
   const start = new Date()
   await next()
   const ms = new Date() - start
@@ -67,13 +64,5 @@ app.use(user.routes(), user.allowedMethods())
 app.use(common.routes(), common.allowedMethods())
 app.use(side.routes(), side.allowedMethods())
 app.use(article.routes(), article.allowedMethods())
-
-//koa2-cors
-// app.use(cors())
-
-// error-handling
-// app.on('error', (err, ctx) => {
-//   console.error('server error', err, ctx)
-// });
 
 module.exports = app

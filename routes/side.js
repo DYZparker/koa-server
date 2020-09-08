@@ -5,18 +5,16 @@ const LinkList = require('../model/linkList')
 router.prefix('/side')
 
 router.get('/info', async function (ctx, next) {
-  const sider = {
-    success: true,
-    tagList: [],
-    linkList: [],
+  const tagList = await TagList.find()
+  const linkList = await LinkList.find()
+  return ctx.body = {
+    code: 200,
+    message: 'success',
+    data: {
+      tagList,
+      linkList
+    }
   }
-  await TagList.find((err, ret) => {
-    return sider.tagList = ret
-  })
-  await LinkList.find((err, ret) => {
-    return sider.linkList = ret
-  })
-  return ctx.body =  sider
 })
 
 //tag标签
@@ -36,121 +34,94 @@ router.post('/tag/list', async function (ctx, next) {
     for(let key in search) {
       searchObject[key] = { $regex:reg, $options:'i'}
     }
-    await TagList.find({...searchObject},null,{skip:page*size, limit:size, sort: {_id: -1}},(err, ret) => {
-      return tagList = ret
-    })
-    await TagList.countDocuments({...search}, (err, count) => {
-      return total = count
-    })
+    tagList = await TagList.find({...searchObject},null,{skip:page*size, limit:size, sort: {_id: -1}})
+    total = await TagList.countDocuments({...search})
   }else {
-    await TagList.find({},null,{sort: {_id: -1}},(err, ret) => {
-      return tagList = ret
-    })
-    await TagList.countDocuments({}, (err, count) => {
-      return total = count
-    })
+    tagList = await TagList.find()
+    total = await TagList.countDocuments({})
   }
   return ctx.body = {
     code: 200,
+    message: 'success',
     data: {
-      message: 'success',
       tagList,
       total
     }
   }
 })
 
-router.post('/tag/delete', async function (ctx, next) {
-  const id= ctx.request.body.searchId
-  await TagList.findOneAndRemove({_id: id},(err, ret) => {
-    return ctx.body = {
-      code: 200,
-      data: {
-        message: '删除标签成功！',
-        tag: ret
-      }
-    }
-  })
-})
-
 router.post('/tag/edit', async function (ctx, next) {
   const tag= ctx.request.body.tag
   if(tag._id) {
-    return await TagList.findOneAndUpdate({_id: tag._id},{...tag},(err, ret) => {
-      return ctx.body = {
-        code: 200,
-        data: {
-          message: '修改标签成功！',
-          tag: ret
-        }
-      }
-    })
-  }
-  await new TagList({...tag}).save().then((res) => {
-    if(res) {
-      return ctx.body = {
-        code: 200,
-        data: {
-          message: '添加标签成功！',
-          tag: res
-        }
+    const ret = await TagList.findOneAndUpdate({_id: tag._id},{...tag})
+    return ctx.body = {
+      code: 200,
+      message: '修改标签成功！',
+      data: {
+        tag: ret
       }
     }
-  })
+  }
+  const ret = await new TagList({...tag}).save()
+  return ctx.body = {
+    code: 200,
+    message: '添加标签成功！',
+    data: {
+      tag: ret
+    }
+  }
+})
+
+router.post('/tag/delete', async function (ctx, next) {
+  const id= ctx.request.body.searchId
+  await TagList.findOneAndRemove({_id: id})
+  return ctx.body = {
+    code: 200,
+    message: '删除标签成功！'
+  }
 })
 
 //link链接
 router.get('/link/list', async function (ctx, next) {
-  let linkList = []
-  await LinkList.find({},null,{sort: {_id: 1}},(err, ret) => {
-    return linkList = ret
-  })
+  const linkList = await LinkList.find({},null,{sort: {_id: 1}})
   return ctx.body = {
     code: 200,
+    message: 'success',
     data: {
-      message: 'success',
       linkList
+    }
+  }
+})
+
+router.post('/link/edit', async function (ctx, next) {
+  const link= ctx.request.body.link
+  if(link._id) {
+    const ret = await LinkList.findOneAndUpdate({_id: link._id},{...link})
+    return ctx.body = {
+      code: 200,
+      message: '修改网站成功！',
+      data: {
+        LinkList: ret
+      }
+    }
+  }
+  const ret = await new LinkList({...link}).save()
+  return ctx.body = {
+    code: 200,
+    message: '添加网站成功！',
+    data: {
+      LinkList: ret
     }
   }
 })
 
 router.post('/link/delete', async function (ctx, next) {
   const id= ctx.request.body.searchId
-  await LinkList.findOneAndRemove({_id: id},(err, ret) => {
-    return ctx.body = {
-      code: 200,
-      data: {
-        message: '删除网站成功！',
-        LinkList: ret
-      }
-    }
-  })
-})
-
-router.post('/link/edit', async function (ctx, next) {
-  const link= ctx.request.body.link
-  if(link._id) {
-    return await LinkList.findOneAndUpdate({_id: link._id},{...link},(err, ret) => {
-      return ctx.body = {
-        code: 200,
-        data: {
-          message: '修改网站成功！',
-          LinkList: ret
-        }
-      }
-    })
+  await LinkList.findOneAndRemove({_id: id})
+  return ctx.body = {
+    code: 200,
+    message: '删除网站成功！'
   }
-  await new LinkList({...link}).save().then((res) => {
-    if(res) {
-      return ctx.body = {
-        code: 200,
-        data: {
-          message: '添加网站成功！',
-          LinkList: res
-        }
-      }
-    }
-  })
 })
 
 module.exports = router
