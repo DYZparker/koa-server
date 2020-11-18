@@ -15,8 +15,7 @@ const User = mongoose.model('User', {
         required: true
     },
     date: {
-      type: Date,
-      default: new Date()
+      type: Date
     }
 });
 

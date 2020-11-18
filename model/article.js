@@ -7,8 +7,7 @@ const Article = mongoose.model('Article', {
     trim: true
   },
   date: {
-    type: Date,
-    default: new Date()
+    type: Date
   },
   tags: {
     type: Array,

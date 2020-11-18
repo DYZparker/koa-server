@@ -30,6 +30,7 @@ router.post('/list', async function (ctx, next) {
 
 router.post('/edit', async function (ctx, next) {
   const article= ctx.request.body.article
+  article.date = Date.now()
   if(article.id) {
     const ret = await Article.findOneAndUpdate({_id: article.id},{...article})
     return ctx.body = {

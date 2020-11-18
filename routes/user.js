@@ -49,6 +49,7 @@ router.post('/add',async function (ctx, next) {
 
 router.post('/edit',async function (ctx, next) {
   const user= ctx.request.body.user
+  user.date = Date.now()
   if(user._id) {
     const ret = await User.findOneAndUpdate({_id: user._id},{...user})
     return ctx.body = {
